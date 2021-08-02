@@ -1,25 +1,24 @@
 package geekbrains.slava_5655380.ui.presenters
 
-import geekbrains.slava_5655380.R
 import geekbrains.slava_5655380.domain.models.CountersModel
+import geekbrains.slava_5655380.ui.presenters.MainView.ButtonIndex
 
 class MainPresenter(val view: MainView) {
     val model = CountersModel()
 
-    //Архитектурная ошибка. В качестве практического задания -- исправить
-    fun counterClick(id: Int){
+    fun counterClick(id: ButtonIndex){
         when(id){
-            R.id.btn_counter1 -> {
+            ButtonIndex.COUNTER_1-> {
                 val nextValue = model.next(0)
-                view.setButtonText(0, nextValue.toString())
+                view.setButtonText(ButtonIndex.COUNTER_1, nextValue.toString())
             }
-            R.id.btn_counter2 -> {
+            ButtonIndex.COUNTER_2 -> {
                 val nextValue = model.next(1)
-                view.setButtonText(1, nextValue.toString())
+                view.setButtonText(ButtonIndex.COUNTER_2, nextValue.toString())
             }
-            R.id.btn_counter3 -> {
+            ButtonIndex.COUNTER_3 -> {
                 val nextValue = model.next(2)
-                view.setButtonText(2, nextValue.toString())
+                view.setButtonText(ButtonIndex.COUNTER_3, nextValue.toString())
             }
         }
     }
