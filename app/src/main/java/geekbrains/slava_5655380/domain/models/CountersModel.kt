@@ -1,9 +1,6 @@
 package geekbrains.slava_5655380.domain.models
 
-class CountersModel {
-
-    val counters = mutableListOf(0, 0, 0)
-
+class CountersModel(private val counters: MutableList<Int> = mutableListOf(0, 0, 0)) {
     fun getCurrent(index: Int): Int {
         return counters[index]
     }
@@ -13,7 +10,7 @@ class CountersModel {
         return getCurrent(index)
     }
 
-    fun set(index: Int, value: Int){
+    fun set(index: Int, value: Int) {
         counters[index] = value
     }
 }
