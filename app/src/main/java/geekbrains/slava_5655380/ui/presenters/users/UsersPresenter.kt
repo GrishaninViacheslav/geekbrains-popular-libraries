@@ -3,6 +3,7 @@ package geekbrains.slava_5655380.ui.presenters.users
 import com.github.terrakok.cicerone.Router
 import geekbrains.slava_5655380.domain.models.githubusers.GithubUser
 import geekbrains.slava_5655380.domain.models.githubusers.GithubUsersRepo
+import geekbrains.slava_5655380.ui.views.Screens
 import geekbrains.slava_5655380.ui.views.fragments.users.adapter.UserItemView
 import geekbrains.slava_5655380.ui.views.fragments.users.UsersView
 import moxy.MvpPresenter
@@ -27,9 +28,9 @@ class UsersPresenter(val usersRepo: GithubUsersRepo, val router: Router) :
         super.onFirstViewAttach()
         viewState.init()
         loadData()
-
         usersListPresenter.itemClickListener = { itemView ->
-            //TODO: переход на экран пользователя c помощью router.navigateTo
+            val login = usersListPresenter.users[itemView.pos].login
+            router.navigateTo(Screens.user(login))
         }
     }
 
@@ -43,5 +44,4 @@ class UsersPresenter(val usersRepo: GithubUsersRepo, val router: Router) :
         router.exit()
         return true
     }
-
 }
