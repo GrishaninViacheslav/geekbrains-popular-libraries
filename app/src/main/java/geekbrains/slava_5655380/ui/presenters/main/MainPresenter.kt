@@ -5,7 +5,7 @@ import geekbrains.slava_5655380.ui.views.Screens
 import geekbrains.slava_5655380.ui.views.activity.MainView
 import moxy.MvpPresenter
 
-class MainPresenter(val router: Router) : MvpPresenter<MainView>() {
+class MainPresenter(private val router: Router) : MvpPresenter<MainView>() {
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()

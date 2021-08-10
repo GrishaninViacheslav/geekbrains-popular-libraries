@@ -8,7 +8,7 @@ import moxy.MvpPresenter
 class UserPresenter(
     private val userRepository: GithubUsersRepo,
     private val router: Router,
-    private val userLogin: String?
+    private val userLogin: String
 ) : MvpPresenter<UserView>() {
 
     override fun onFirstViewAttach() {
@@ -17,11 +17,8 @@ class UserPresenter(
     }
 
     private fun loadData() {
-        userLogin?.let {
-            val user = userRepository.getUser(it)
-            user.let { githubUser ->
-                viewState.showData("LOGIN: ${githubUser.login}")
-            }
+        with(userRepository.getUser(userLogin)){
+            viewState.showData("LOGIN: $login")
         }
     }
 

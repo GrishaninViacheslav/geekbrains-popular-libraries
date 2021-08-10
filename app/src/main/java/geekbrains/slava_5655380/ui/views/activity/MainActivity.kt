@@ -1,6 +1,8 @@
 package geekbrains.slava_5655380.ui.views.activity
 
 import android.os.Bundle
+import by.kirich1409.viewbindingdelegate.CreateMethod
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import geekbrains.slava_5655380.*
 import geekbrains.slava_5655380.databinding.ActivityMainBinding
@@ -11,15 +13,13 @@ import moxy.ktx.moxyPresenter
 
 class MainActivity : MvpAppCompatActivity(), MainView {
 
-    val navigator = AppNavigator(this, R.id.container)
-
+    private val navigator = AppNavigator(this, R.id.container)
     private val presenter by moxyPresenter { MainPresenter(App.instance.router) }
-    private var vb: ActivityMainBinding? = null
+    private val view: ActivityMainBinding by viewBinding(createMethod = CreateMethod.INFLATE)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        vb = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(vb?.root)
+        setContentView(view.root)
     }
 
     override fun onResumeFragments() {
