@@ -4,17 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.views.fragments.user.UserFragment">
+    tools:context=".ui.views.fragments.details.DetailsFragment">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:text="USER INFO"
+        android:text="CONVERSATION"
         android:textSize="50sp" />
 
     <TextView
-        android:id="@+id/text_login"
+        android:id="@+id/name_"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
