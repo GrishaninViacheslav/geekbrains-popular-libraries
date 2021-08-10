@@ -1,5 +1,6 @@
 package geekbrains.slava_5655380.domain.models.githubusers
 
+import io.reactivex.Maybe
 import io.reactivex.Single
 
 class GithubUsersRepo {
@@ -13,6 +14,12 @@ class GithubUsersRepo {
 
     fun getUsers(): Single<List<GithubUser>> = Single.just(repositories)
 
-    fun getUser(id: String): Single<GithubUser> =
-        Single.just(repositories.first { user -> user.login == id })
+    fun getUser(id: String): Maybe<GithubUser>{
+        return try{
+            Maybe.just(repositories.first { user -> user.login == id })
+        }catch (e: NoSuchElementException){
+            Maybe.empty()
+        }
+    }
+
 }
