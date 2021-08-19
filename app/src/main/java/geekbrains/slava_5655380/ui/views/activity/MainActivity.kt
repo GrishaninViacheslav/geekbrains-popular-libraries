@@ -7,7 +7,7 @@ import com.github.terrakok.cicerone.androidx.AppNavigator
 import geekbrains.slava_5655380.*
 import geekbrains.slava_5655380.databinding.ActivityMainBinding
 import geekbrains.slava_5655380.ui.presenters.main.MainPresenter
-import geekbrains.slava_5655380.ui.views.fragments.history.BackButtonListener
+import geekbrains.slava_5655380.ui.views.fragments.users.BackButtonListener
 import moxy.MvpAppCompatActivity
 import moxy.ktx.moxyPresenter
 
