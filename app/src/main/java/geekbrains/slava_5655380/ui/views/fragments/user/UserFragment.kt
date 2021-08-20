@@ -6,9 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import by.kirich1409.viewbindingdelegate.CreateMethod
 import by.kirich1409.viewbindingdelegate.viewBinding
+import geekbrains.slava_5655380.ApiHolder
 import geekbrains.slava_5655380.App
 import geekbrains.slava_5655380.databinding.FragmentUserBinding
-import geekbrains.slava_5655380.domain.models.githubusers.GithubUsersRepo
+import geekbrains.slava_5655380.domain.models.githubusers.IGithubUsersRepo
+import geekbrains.slava_5655380.domain.models.githubusers.RetrofitGithubUsersRepo
 import geekbrains.slava_5655380.ui.presenters.user.UserPresenter
 import geekbrains.slava_5655380.ui.views.fragments.users.BackButtonListener
 import moxy.MvpAppCompatFragment
@@ -20,7 +22,7 @@ class UserFragment : MvpAppCompatFragment(), UserView, BackButtonListener {
     private val view: FragmentUserBinding by viewBinding(createMethod = CreateMethod.INFLATE)
     private val presenter by moxyPresenter {
         UserPresenter(
-            GithubUsersRepo(),
+            RetrofitGithubUsersRepo(ApiHolder.api),
             App.instance.router,
             userId!!
         )

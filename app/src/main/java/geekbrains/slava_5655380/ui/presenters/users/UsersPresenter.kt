@@ -1,9 +1,8 @@
 package geekbrains.slava_5655380.ui.presenters.users
 
-import android.util.Log
 import com.github.terrakok.cicerone.Router
 import geekbrains.slava_5655380.domain.models.githubusers.GithubUser
-import geekbrains.slava_5655380.domain.models.githubusers.GithubUsersRepo
+import geekbrains.slava_5655380.domain.models.githubusers.IGithubUsersRepo
 import geekbrains.slava_5655380.ui.views.Screens
 import geekbrains.slava_5655380.ui.views.fragments.users.UsersView
 import geekbrains.slava_5655380.ui.views.fragments.users.adapter.UserItemView
@@ -15,7 +14,7 @@ import moxy.MvpPresenter
 
 class UsersPresenter(
     private val disposables: CompositeDisposable = CompositeDisposable(),
-    private val usersRepo: GithubUsersRepo,
+    private val usersRepo: IGithubUsersRepo,
     private val router: Router,
     val usersListPresenter: UsersListPresenter = UsersListPresenter()
 ) :
@@ -28,7 +27,10 @@ class UsersPresenter(
 
         override fun bindView(view: UserItemView) {
             val user = users[view.pos]
-            view.setLogin(user.login)
+            with(view) {
+                user.login?.let { setLogin(it) }
+                user.avatarUrl?.let { loadAvatar(it) }
+            }
         }
     }
 
@@ -48,17 +50,18 @@ class UsersPresenter(
         viewState.init()
         loadData()
         usersListPresenter.itemClickListener = { itemView ->
-            val login = usersListPresenter.users[itemView.pos].login
-            router.navigateTo(Screens.user(login))
+            val id = usersListPresenter.users[itemView.pos].id
+            router.navigateTo(Screens.user(id))
         }
     }
 
     fun loadData() {
-        disposables.add(usersRepo
-            .getUsers()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.newThread())
-            .subscribeWith(observer)
+        disposables.add(
+            usersRepo
+                .getUsers()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.newThread())
+                .subscribeWith(observer)
         )
     }
 
