@@ -4,6 +4,7 @@ import com.github.terrakok.cicerone.Router
 import geekbrains.slava_5655380.domain.models.githubusers.GithubUser
 import geekbrains.slava_5655380.domain.models.githubusers.IGithubUsersRepo
 import geekbrains.slava_5655380.domain.models.githubusers.githubrepository.GithubRepository
+import geekbrains.slava_5655380.ui.views.Screens
 import geekbrains.slava_5655380.ui.views.fragments.user.UserView
 import geekbrains.slava_5655380.ui.views.fragments.user.adapter.RepositoryItemView
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -50,6 +51,11 @@ class UserPresenter(
         viewState.showUserData("LOGIN: ${user.login}")
         viewState.init()
         loadData()
+        repositoryListPresenter.itemClickListener = { itemView ->
+            with(repositoryListPresenter.repositories[itemView.pos]){
+                router.navigateTo(Screens.repository(this))
+            }
+        }
     }
 
     private fun loadData() {

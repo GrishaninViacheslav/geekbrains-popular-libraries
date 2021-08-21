@@ -19,14 +19,14 @@ import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
 class UserFragment : MvpAppCompatFragment(), UserView, BackButtonListener {
-    private val userId by lazy { requireArguments().getParcelable<GithubUser>(ARG_USER) }
+    private val user by lazy { requireArguments().getParcelable<GithubUser>(ARG_USER) }
     private val ARG_USER = "USER"
     private val view: FragmentUserBinding by viewBinding(createMethod = CreateMethod.INFLATE)
     private val presenter by moxyPresenter {
         UserPresenter(
             RetrofitGithubUsersRepo(ApiHolder.api),
             App.instance.router,
-            userId!!
+            user!!
         )
     }
 
