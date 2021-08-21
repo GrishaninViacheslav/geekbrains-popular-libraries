@@ -35,7 +35,7 @@ class UsersRVAdapter(val presenter: IUserListPresenter, val imageLoader: IImageL
             tvLogin.text = text
         }
 
-        override fun loadAvatar(url: String) = with(vb) {
+        override fun loadAvatar(url: String) {
             imageLoader.loadInto(url, vb.ivAvatar)
         }
     }

@@ -50,8 +50,9 @@ class UsersPresenter(
         viewState.init()
         loadData()
         usersListPresenter.itemClickListener = { itemView ->
-            val id = usersListPresenter.users[itemView.pos].id
-            router.navigateTo(Screens.user(id))
+            with(usersListPresenter.users[itemView.pos]){
+                router.navigateTo(Screens.user(this))
+            }
         }
     }
 

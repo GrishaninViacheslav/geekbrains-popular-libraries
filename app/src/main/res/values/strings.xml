@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">geekbrains-popular-libraries</string>
+    <string name="repositories">REPOSITORIES:</string>
 </resources>
