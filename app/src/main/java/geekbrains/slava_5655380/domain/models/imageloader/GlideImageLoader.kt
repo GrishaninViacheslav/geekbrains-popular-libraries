@@ -1,4 +1,4 @@
-package geekbrains.slava_5655380.domain.models.githubusers
+package geekbrains.slava_5655380.domain.models.imageloader
 
 import android.widget.ImageView
 import com.bumptech.glide.Glide

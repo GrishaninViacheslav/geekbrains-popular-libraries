@@ -3,6 +3,7 @@ package geekbrains.slava_5655380
 import android.app.Application
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Router
+import geekbrains.slava_5655380.domain.models.repositories.github.Database
 
 class App : Application() {
     companion object {
@@ -18,5 +19,6 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        Database.create(this)
     }
 }

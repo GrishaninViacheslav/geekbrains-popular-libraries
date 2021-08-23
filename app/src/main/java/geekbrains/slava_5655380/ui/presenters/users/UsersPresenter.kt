@@ -1,8 +1,8 @@
 package geekbrains.slava_5655380.ui.presenters.users
 
 import com.github.terrakok.cicerone.Router
-import geekbrains.slava_5655380.domain.models.githubusers.GithubUser
-import geekbrains.slava_5655380.domain.models.githubusers.IGithubUsersRepo
+import geekbrains.slava_5655380.domain.models.repositories.github.user.GithubUser
+import geekbrains.slava_5655380.domain.models.repositories.github.IGithubUsersRepo
 import geekbrains.slava_5655380.ui.views.Screens
 import geekbrains.slava_5655380.ui.views.fragments.users.UsersView
 import geekbrains.slava_5655380.ui.views.fragments.users.adapter.UserItemView
@@ -28,7 +28,7 @@ class UsersPresenter(
         override fun bindView(view: UserItemView) {
             val user = users[view.pos]
             with(view) {
-                setLogin(user.login)
+                user.login?.let { setLogin(it) }
                 user.avatarUrl?.let { loadAvatar(it) }
             }
         }

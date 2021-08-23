@@ -1,9 +1,9 @@
 package geekbrains.slava_5655380.ui.presenters.user
 
 import com.github.terrakok.cicerone.Router
-import geekbrains.slava_5655380.domain.models.githubusers.GithubUser
-import geekbrains.slava_5655380.domain.models.githubusers.IGithubUsersRepo
-import geekbrains.slava_5655380.domain.models.githubusers.githubrepository.GithubRepository
+import geekbrains.slava_5655380.domain.models.repositories.github.user.GithubUser
+import geekbrains.slava_5655380.domain.models.repositories.github.IGithubUsersRepo
+import geekbrains.slava_5655380.domain.models.repositories.github.repository.GithubRepository
 import geekbrains.slava_5655380.ui.views.Screens
 import geekbrains.slava_5655380.ui.views.fragments.user.UserView
 import geekbrains.slava_5655380.ui.views.fragments.user.adapter.RepositoryItemView
@@ -48,11 +48,11 @@ class UserPresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        viewState.showUserData(user.login)
+        user.login?.let { viewState.showUserData(it) }
         viewState.init()
         loadData()
         repositoryListPresenter.itemClickListener = { itemView ->
-            with(repositoryListPresenter.repositories[itemView.pos]){
+            with(repositoryListPresenter.repositories[itemView.pos]) {
                 router.navigateTo(Screens.repository(this))
             }
         }
@@ -64,13 +64,11 @@ class UserPresenter(
     }
 
     private fun loadData() {
-        disposable = user.repos_url?.let {
-            userRepository
-                .getRepositories(it)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.newThread())
-                .subscribeWith(observer)
-        }
+        disposable = userRepository
+            .getRepositories(user)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.newThread())
+            .subscribeWith(observer)
     }
 
     fun backPressed(): Boolean {

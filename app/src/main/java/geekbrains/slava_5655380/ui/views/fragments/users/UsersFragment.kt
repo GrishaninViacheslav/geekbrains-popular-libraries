@@ -7,8 +7,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import geekbrains.slava_5655380.ApiHolder
 import geekbrains.slava_5655380.App
 import geekbrains.slava_5655380.databinding.FragmentUsersBinding
-import geekbrains.slava_5655380.domain.models.githubusers.GlideImageLoader
-import geekbrains.slava_5655380.domain.models.githubusers.RetrofitGithubUsersRepo
+import geekbrains.slava_5655380.domain.models.imageloader.GlideImageLoader
+import geekbrains.slava_5655380.domain.models.networkstatus.AndroidNetworkStatus
+import geekbrains.slava_5655380.domain.models.repositories.github.Database
+import geekbrains.slava_5655380.domain.models.repositories.github.RetrofitGithubUsersRepo
 import geekbrains.slava_5655380.ui.presenters.users.UsersPresenter
 import geekbrains.slava_5655380.ui.views.fragments.users.adapter.UsersRVAdapter
 import moxy.MvpAppCompatFragment
@@ -21,7 +23,7 @@ class UsersFragment : MvpAppCompatFragment(), UsersView, BackButtonListener {
 
     val presenter: UsersPresenter by moxyPresenter {
         UsersPresenter(
-            usersRepo = RetrofitGithubUsersRepo(ApiHolder.api),
+            usersRepo = RetrofitGithubUsersRepo(ApiHolder.api, AndroidNetworkStatus(requireContext()), Database.getInstance()),
             router = App.instance.router
         )
     }
