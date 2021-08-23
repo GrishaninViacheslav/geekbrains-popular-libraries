@@ -2,47 +2,75 @@ package geekbrains.slava_5655380.ui.presenters.user
 
 import com.github.terrakok.cicerone.Router
 import geekbrains.slava_5655380.domain.models.githubusers.GithubUser
-import geekbrains.slava_5655380.domain.models.githubusers.GithubUsersRepo
+import geekbrains.slava_5655380.domain.models.githubusers.IGithubUsersRepo
+import geekbrains.slava_5655380.domain.models.githubusers.githubrepository.GithubRepository
+import geekbrains.slava_5655380.ui.views.Screens
 import geekbrains.slava_5655380.ui.views.fragments.user.UserView
+import geekbrains.slava_5655380.ui.views.fragments.user.adapter.RepositoryItemView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.observers.DisposableMaybeObserver
+import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import moxy.MvpPresenter
-import java.lang.RuntimeException
 
 class UserPresenter(
-    private val userRepository: GithubUsersRepo,
+    private val userRepository: IGithubUsersRepo,
     private val router: Router,
-    private val userLogin: String,
-    private var disposable: Disposable? = null
+    private val user: GithubUser,
+    private var disposable: Disposable? = null,
+    val repositoryListPresenter: RepositoryListPresenter = RepositoryListPresenter()
 ) : MvpPresenter<UserView>() {
-    private val observer = object : DisposableMaybeObserver<GithubUser>() {
-        override fun onSuccess(value: GithubUser) {
-            viewState.showData("LOGIN: ${value.login}")
+    class RepositoryListPresenter : IRepositoriesListPresenter {
+        val repositories = mutableListOf<GithubRepository>()
+        override var itemClickListener: ((RepositoryItemView) -> Unit)? = null
+
+        override fun getCount() = repositories.size
+
+        override fun bindView(view: RepositoryItemView) {
+            val repository = repositories[view.pos]
+            with(view) {
+                repository.name?.let { setName(it) }
+                repository.description?.let { setDescription(it) }
+            }
+        }
+    }
+
+    private val observer = object : DisposableSingleObserver<List<GithubRepository>>() {
+        override fun onSuccess(value: List<GithubRepository>) {
+            repositoryListPresenter.repositories.addAll(value)
+            viewState.updateList()
         }
 
         override fun onError(error: Throwable) {
             error.printStackTrace()
         }
-
-        override fun onComplete() {
-            onError(RuntimeException("GitHub user not found"))
-        }
     }
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
+        viewState.showUserData(user.login)
+        viewState.init()
         loadData()
+        repositoryListPresenter.itemClickListener = { itemView ->
+            with(repositoryListPresenter.repositories[itemView.pos]){
+                router.navigateTo(Screens.repository(this))
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        disposable?.dispose()
     }
 
     private fun loadData() {
-        disposable = userRepository
-            .getUser(userLogin)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.newThread())
-            .subscribeWith(observer)
-
+        disposable = user.repos_url?.let {
+            userRepository
+                .getRepositories(it)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.newThread())
+                .subscribeWith(observer)
+        }
     }
 
     fun backPressed(): Boolean {

@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
+import geekbrains.slava_5655380.ApiHolder
 import geekbrains.slava_5655380.App
-import geekbrains.slava_5655380.domain.models.githubusers.GithubUsersRepo
 import geekbrains.slava_5655380.databinding.FragmentUsersBinding
+import geekbrains.slava_5655380.domain.models.githubusers.GlideImageLoader
+import geekbrains.slava_5655380.domain.models.githubusers.RetrofitGithubUsersRepo
 import geekbrains.slava_5655380.ui.presenters.users.UsersPresenter
 import geekbrains.slava_5655380.ui.views.fragments.users.adapter.UsersRVAdapter
 import moxy.MvpAppCompatFragment
@@ -19,7 +21,7 @@ class UsersFragment : MvpAppCompatFragment(), UsersView, BackButtonListener {
 
     val presenter: UsersPresenter by moxyPresenter {
         UsersPresenter(
-            usersRepo = GithubUsersRepo(),
+            usersRepo = RetrofitGithubUsersRepo(ApiHolder.api),
             router = App.instance.router
         )
     }
@@ -43,7 +45,7 @@ class UsersFragment : MvpAppCompatFragment(), UsersView, BackButtonListener {
 
     override fun init() {
         vb?.rvUsers?.layoutManager = LinearLayoutManager(context)
-        adapter = UsersRVAdapter(presenter.usersListPresenter)
+        adapter = UsersRVAdapter(presenter.usersListPresenter, GlideImageLoader())
         vb?.rvUsers?.adapter = adapter
     }
 

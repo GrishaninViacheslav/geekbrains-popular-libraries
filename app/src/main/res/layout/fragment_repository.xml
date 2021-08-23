@@ -10,29 +10,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:text="USER INFO"
+        android:text="REPOSITORY INFO"
         android:textSize="50sp" />
 
     <TextView
-        android:id="@+id/text_login"
+        android:id="@+id/tv_repository_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:textSize="20sp" />
 
     <TextView
+        android:id="@+id/tv_repository_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:textSize="20sp"
-        android:text="@string/repositories_is"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_repositories"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingTop="16dp"
-        android:clipToPadding="false"
-        android:paddingBottom="16dp" />
-
+        android:textSize="20sp" />
 </LinearLayout>

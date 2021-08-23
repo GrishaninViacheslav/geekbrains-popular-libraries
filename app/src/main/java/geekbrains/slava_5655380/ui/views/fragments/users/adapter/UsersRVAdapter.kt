@@ -2,11 +2,13 @@ package geekbrains.slava_5655380.ui.views.fragments.users.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import geekbrains.slava_5655380.databinding.ItemUserBinding
+import geekbrains.slava_5655380.domain.models.githubusers.IImageLoader
 import geekbrains.slava_5655380.ui.presenters.users.IUserListPresenter
 
-class UsersRVAdapter(val presenter: IUserListPresenter) :
+class UsersRVAdapter(val presenter: IUserListPresenter, val imageLoader: IImageLoader<ImageView>) :
     RecyclerView.Adapter<UsersRVAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
@@ -25,12 +27,16 @@ class UsersRVAdapter(val presenter: IUserListPresenter) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) =
         presenter.bindView(holder.apply { pos = position })
 
-    inner class ViewHolder(val vb: ItemUserBinding) : RecyclerView.ViewHolder(vb.root),
+    inner class ViewHolder(private val vb: ItemUserBinding) : RecyclerView.ViewHolder(vb.root),
         UserItemView {
         override var pos = -1
 
         override fun setLogin(text: String) = with(vb) {
             tvLogin.text = text
+        }
+
+        override fun loadAvatar(url: String) {
+            imageLoader.loadInto(url, vb.ivAvatar)
         }
     }
 }
