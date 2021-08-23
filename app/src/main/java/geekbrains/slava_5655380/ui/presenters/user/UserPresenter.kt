@@ -48,7 +48,7 @@ class UserPresenter(
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        viewState.showUserData("LOGIN: ${user.login}")
+        viewState.showUserData(user.login)
         viewState.init()
         loadData()
         repositoryListPresenter.itemClickListener = { itemView ->
@@ -56,6 +56,11 @@ class UserPresenter(
                 router.navigateTo(Screens.repository(this))
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        disposable?.dispose()
     }
 
     private fun loadData() {

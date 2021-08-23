@@ -9,6 +9,7 @@ import by.kirich1409.viewbindingdelegate.CreateMethod
 import by.kirich1409.viewbindingdelegate.viewBinding
 import geekbrains.slava_5655380.ApiHolder
 import geekbrains.slava_5655380.App
+import geekbrains.slava_5655380.R
 import geekbrains.slava_5655380.databinding.FragmentUserBinding
 import geekbrains.slava_5655380.domain.models.githubusers.GithubUser
 import geekbrains.slava_5655380.domain.models.githubusers.RetrofitGithubUsersRepo
@@ -48,7 +49,7 @@ class UserFragment : MvpAppCompatFragment(), UserView, BackButtonListener {
     }
 
     override fun showUserData(data: String) {
-        view.textLogin.text = data
+        view.textLogin.text = String.format(getString(R.string.user_login_is), data)
     }
 
     override fun init() {

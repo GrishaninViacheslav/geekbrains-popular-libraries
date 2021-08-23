@@ -28,7 +28,7 @@ class UsersPresenter(
         override fun bindView(view: UserItemView) {
             val user = users[view.pos]
             with(view) {
-                user.login?.let { setLogin(it) }
+                setLogin(user.login)
                 user.avatarUrl?.let { loadAvatar(it) }
             }
         }
@@ -56,7 +56,12 @@ class UsersPresenter(
         }
     }
 
-    fun loadData() {
+    override fun onDestroy() {
+        super.onDestroy()
+        disposables.dispose()
+    }
+
+    private fun loadData() {
         disposables.add(
             usersRepo
                 .getUsers()
