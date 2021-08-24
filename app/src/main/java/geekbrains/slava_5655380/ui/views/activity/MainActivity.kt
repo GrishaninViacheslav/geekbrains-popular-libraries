@@ -1,7 +1,6 @@
 package geekbrains.slava_5655380.ui.views.activity
 
 import android.os.Bundle
-import android.util.Log
 import by.kirich1409.viewbindingdelegate.CreateMethod
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.github.terrakok.cicerone.NavigatorHolder
@@ -23,7 +22,6 @@ class MainActivity : MvpAppCompatActivity(), MainView {
     private val presenter by moxyPresenter {
         MainPresenter().apply {
             App.instance.appComponent.inject(this)
-            Log.d("[MYLOG]", "MainActivity inject")
         }
     }
     private val view: ActivityMainBinding by viewBinding(createMethod = CreateMethod.INFLATE)

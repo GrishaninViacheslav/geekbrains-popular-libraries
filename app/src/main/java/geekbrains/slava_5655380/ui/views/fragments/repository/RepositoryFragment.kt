@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import by.kirich1409.viewbindingdelegate.CreateMethod
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.github.terrakok.cicerone.Router
 import geekbrains.slava_5655380.App
 import geekbrains.slava_5655380.R
 import geekbrains.slava_5655380.databinding.FragmentRepositoryBinding
@@ -16,19 +15,16 @@ import geekbrains.slava_5655380.ui.views.fragments.user.adapter.RepositoryRVAdap
 import geekbrains.slava_5655380.ui.views.fragments.users.BackButtonListener
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
-import javax.inject.Inject
 
 class RepositoryFragment : MvpAppCompatFragment(), RepositoryView, BackButtonListener {
     private val view: FragmentRepositoryBinding by viewBinding(createMethod = CreateMethod.INFLATE)
 
     var adapter: RepositoryRVAdapter? = null
-    //При выполнении практического задания это должно отсюда уйти
-    @Inject
-    lateinit var router: Router
 
     val presenter: RepositoryPresenter by moxyPresenter {
-        val repository = arguments?.getParcelable<GithubRepository>(REPOSITORY_ARG) as GithubRepository
-        RepositoryPresenter(router, repository)
+        val repository =
+            arguments?.getParcelable<GithubRepository>(REPOSITORY_ARG) as GithubRepository
+        RepositoryPresenter(repository).apply { App.instance.appComponent.inject(this) }
     }
 
     override fun onCreateView(
@@ -43,7 +39,6 @@ class RepositoryFragment : MvpAppCompatFragment(), RepositoryView, BackButtonLis
             arguments = Bundle().apply {
                 putParcelable(REPOSITORY_ARG, repository)
             }
-            App.instance.appComponent.inject(this)
         }
     }
 
@@ -54,6 +49,7 @@ class RepositoryFragment : MvpAppCompatFragment(), RepositoryView, BackButtonLis
     }
 
     override fun setDescription(description: String) {
-        view.tvRepositoryDescription.text = String.format(getString(R.string.repository_description_is), description)
+        view.tvRepositoryDescription.text =
+            String.format(getString(R.string.repository_description_is), description)
     }
 }

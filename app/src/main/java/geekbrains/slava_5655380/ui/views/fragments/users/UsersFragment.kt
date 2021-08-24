@@ -6,30 +6,18 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import geekbrains.slava_5655380.App
 import geekbrains.slava_5655380.databinding.FragmentUsersBinding
-import geekbrains.slava_5655380.domain.models.imageloader.GlideImageLoader
-import geekbrains.slava_5655380.domain.models.networkstatus.AndroidNetworkStatus
-import geekbrains.slava_5655380.domain.models.repositories.github.Database
-import geekbrains.slava_5655380.domain.models.repositories.github.RetrofitGithubUsersRepo
-import geekbrains.slava_5655380.domain.models.repositories.github.RoomGithubCache
 import geekbrains.slava_5655380.ui.presenters.users.UsersPresenter
 import geekbrains.slava_5655380.ui.views.fragments.users.adapter.UsersRVAdapter
-import io.reactivex.android.schedulers.AndroidSchedulers
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
-import javax.inject.Inject
 
 class UsersFragment : MvpAppCompatFragment(), UsersView, BackButtonListener {
     companion object {
-        fun newInstance() = UsersFragment().apply {
-            App.instance.appComponent.inject(this)
-        }
+        fun newInstance() = UsersFragment()
     }
 
-    @Inject
-    lateinit var database: Database
-
     val presenter: UsersPresenter by moxyPresenter {
-        UsersPresenter(AndroidSchedulers.mainThread()).apply {
+        UsersPresenter().apply {
             App.instance.appComponent.inject(this)
         }
     }
@@ -53,9 +41,8 @@ class UsersFragment : MvpAppCompatFragment(), UsersView, BackButtonListener {
     override fun init() {
         vb?.rvUsers?.layoutManager = LinearLayoutManager(context)
         adapter = UsersRVAdapter(
-            presenter.usersListPresenter,
-            GlideImageLoader()
-        )
+            presenter.usersListPresenter
+        ).apply { App.instance.appComponent.inject(this) }
         vb?.rvUsers?.adapter = adapter
     }
 

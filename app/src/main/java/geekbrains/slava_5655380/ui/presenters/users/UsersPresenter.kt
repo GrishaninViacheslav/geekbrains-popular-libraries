@@ -10,12 +10,10 @@ import geekbrains.slava_5655380.ui.views.fragments.users.adapter.UserItemView
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
-import io.reactivex.schedulers.Schedulers
 import moxy.MvpPresenter
 import javax.inject.Inject
 
 class UsersPresenter(
-    private val mainScheduler: Scheduler,
     private val disposables: CompositeDisposable = CompositeDisposable(),
     val usersListPresenter: UsersListPresenter = UsersListPresenter()
 ) :
@@ -43,8 +41,15 @@ class UsersPresenter(
 
     @Inject
     lateinit var usersRepo: IGithubUsersRepo
-    @Inject lateinit var router: Router
-    @Inject lateinit var screens: IScreens
+
+    @Inject
+    lateinit var router: Router
+
+    @Inject
+    lateinit var screens: IScreens
+
+    @Inject
+    lateinit var uiScheduler: Scheduler
 
     private val observer = object : DisposableSingleObserver<List<GithubUser>>() {
         override fun onSuccess(value: List<GithubUser>) {
@@ -62,7 +67,7 @@ class UsersPresenter(
         viewState.init()
         loadData()
         usersListPresenter.itemClickListener = { itemView ->
-            with(usersListPresenter.users[itemView.pos]){
+            with(usersListPresenter.users[itemView.pos]) {
                 router.navigateTo(screens.user(this))
             }
         }
@@ -77,7 +82,7 @@ class UsersPresenter(
         disposables.add(
             usersRepo
                 .getUsers()
-                .observeOn(mainScheduler)
+                .observeOn(uiScheduler)
                 .subscribeWith(observer)
         )
     }
