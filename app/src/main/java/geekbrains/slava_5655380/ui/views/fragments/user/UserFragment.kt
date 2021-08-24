@@ -7,29 +7,41 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.CreateMethod
 import by.kirich1409.viewbindingdelegate.viewBinding
-import geekbrains.slava_5655380.ApiHolder
+import com.github.terrakok.cicerone.Router
 import geekbrains.slava_5655380.App
 import geekbrains.slava_5655380.R
 import geekbrains.slava_5655380.databinding.FragmentUserBinding
 import geekbrains.slava_5655380.domain.models.networkstatus.AndroidNetworkStatus
+import geekbrains.slava_5655380.domain.models.repositories.github.Database
+import geekbrains.slava_5655380.domain.models.repositories.github.IDataSource
 import geekbrains.slava_5655380.domain.models.repositories.github.user.GithubUser
 import geekbrains.slava_5655380.domain.models.repositories.github.RetrofitGithubUsersRepo
 import geekbrains.slava_5655380.domain.models.repositories.github.RoomGithubCache
 import geekbrains.slava_5655380.ui.presenters.user.UserPresenter
+import geekbrains.slava_5655380.ui.views.Screens
 import geekbrains.slava_5655380.ui.views.fragments.user.adapter.RepositoryRVAdapter
 import geekbrains.slava_5655380.ui.views.fragments.users.BackButtonListener
+import io.reactivex.android.schedulers.AndroidSchedulers
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
+import javax.inject.Inject
 
 class UserFragment : MvpAppCompatFragment(), UserView, BackButtonListener {
-    private val user by lazy { requireArguments().getParcelable<GithubUser>(ARG_USER) }
-    private val ARG_USER = "USER"
     private val view: FragmentUserBinding by viewBinding(createMethod = CreateMethod.INFLATE)
-    private val presenter by moxyPresenter {
+
+    @Inject
+    lateinit var database: Database
+    @Inject lateinit var router: Router
+    @Inject lateinit var api: IDataSource
+
+    val presenter: UserPresenter by moxyPresenter {
+        val user = arguments?.getParcelable<GithubUser>(USER_ARG) as GithubUser
         UserPresenter(
-            RetrofitGithubUsersRepo(ApiHolder.api, AndroidNetworkStatus(requireContext()), RoomGithubCache()),
-            App.instance.router,
-            user!!
+            AndroidSchedulers.mainThread(),
+            RetrofitGithubUsersRepo(api, AndroidNetworkStatus(App.instance), RoomGithubCache(database)),
+            router,
+            user,
+            Screens()
         )
     }
 
@@ -41,15 +53,15 @@ class UserFragment : MvpAppCompatFragment(), UserView, BackButtonListener {
     ): View = view.root
 
     companion object {
-        @JvmStatic
-        fun newInstance(user: GithubUser) =
-            UserFragment().apply {
-                arguments = Bundle().apply {
-                    putParcelable(ARG_USER, user)
-                }
-            }
-    }
+        private const val USER_ARG = "user"
 
+        fun newInstance(user: GithubUser) = UserFragment().apply {
+            arguments = Bundle().apply {
+                putParcelable(USER_ARG, user)
+            }
+            App.instance.appComponent.inject(this)
+        }
+    }
     override fun showUserData(data: String) {
         view.textLogin.text = String.format(getString(R.string.user_login_is), data)
     }

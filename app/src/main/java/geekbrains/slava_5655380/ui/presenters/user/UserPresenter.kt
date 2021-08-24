@@ -6,6 +6,7 @@ import geekbrains.slava_5655380.domain.models.repositories.github.user.GithubUse
 import geekbrains.slava_5655380.domain.models.repositories.github.IGithubUsersRepo
 import geekbrains.slava_5655380.domain.models.repositories.github.repository.GithubRepository
 import geekbrains.slava_5655380.ui.views.Screens
+import geekbrains.slava_5655380.ui.views.activity.IScreens
 import geekbrains.slava_5655380.ui.views.fragments.user.UserView
 import geekbrains.slava_5655380.ui.views.fragments.user.adapter.RepositoryItemView
 import io.reactivex.Scheduler
@@ -15,9 +16,11 @@ import io.reactivex.observers.DisposableSingleObserver
 import moxy.MvpPresenter
 
 class UserPresenter(
+    private val scheduler: Scheduler,
     private val userRepository: IGithubUsersRepo,
     private val router: Router,
     private val user: GithubUser,
+    private val screens: IScreens,
     private var disposable: Disposable? = null,
     private val uiScheduler: Scheduler = AndroidSchedulers.mainThread(),
     val repositoryListPresenter: RepositoryListPresenter = RepositoryListPresenter()
@@ -57,7 +60,7 @@ class UserPresenter(
         loadData()
         repositoryListPresenter.itemClickListener = { itemView ->
             with(repositoryListPresenter.repositories[itemView.pos]) {
-                router.navigateTo(Screens.repository(this))
+                router.navigateTo(screens.repository(this))
             }
         }
     }

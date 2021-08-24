@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import by.kirich1409.viewbindingdelegate.CreateMethod
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.github.terrakok.cicerone.Router
 import geekbrains.slava_5655380.App
 import geekbrains.slava_5655380.R
 import geekbrains.slava_5655380.databinding.FragmentRepositoryBinding
@@ -15,19 +16,20 @@ import geekbrains.slava_5655380.ui.views.fragments.user.adapter.RepositoryRVAdap
 import geekbrains.slava_5655380.ui.views.fragments.users.BackButtonListener
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
+import javax.inject.Inject
 
 class RepositoryFragment : MvpAppCompatFragment(), RepositoryView, BackButtonListener {
-    private val repository by lazy { requireArguments().getParcelable<GithubRepository>(argRepository) }
-    private val argRepository = "REPOSITORY"
     private val view: FragmentRepositoryBinding by viewBinding(createMethod = CreateMethod.INFLATE)
-    private val presenter by moxyPresenter {
-        RepositoryPresenter(
-            App.instance.router,
-            repository!!
-        )
-    }
 
     var adapter: RepositoryRVAdapter? = null
+    //При выполнении практического задания это должно отсюда уйти
+    @Inject
+    lateinit var router: Router
+
+    val presenter: RepositoryPresenter by moxyPresenter {
+        val repository = arguments?.getParcelable<GithubRepository>(REPOSITORY_ARG) as GithubRepository
+        RepositoryPresenter(router, repository)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,13 +37,14 @@ class RepositoryFragment : MvpAppCompatFragment(), RepositoryView, BackButtonLis
     ): View = view.root
 
     companion object {
-        @JvmStatic
-        fun newInstance(repository: GithubRepository) =
-            RepositoryFragment().apply {
-                arguments = Bundle().apply {
-                    putParcelable(argRepository, repository)
-                }
+        private const val REPOSITORY_ARG = "repository"
+
+        fun newInstance(repository: GithubRepository) = RepositoryFragment().apply {
+            arguments = Bundle().apply {
+                putParcelable(REPOSITORY_ARG, repository)
             }
+            App.instance.appComponent.inject(this)
+        }
     }
 
     override fun backPressed() = presenter.backPressed()
