@@ -1,5 +1,6 @@
 package geekbrains.slava_5655380.ui.presenters.users
 
+import android.util.Log
 import com.github.terrakok.cicerone.Router
 import geekbrains.slava_5655380.domain.models.repositories.github.user.GithubUser
 import geekbrains.slava_5655380.domain.models.repositories.github.IGithubUsersRepo
@@ -28,8 +29,14 @@ class UsersPresenter(
         override fun bindView(view: UserItemView) {
             val user = users[view.pos]
             with(view) {
-                user.login?.let { setLogin(it) }
-                user.avatarUrl?.let { loadAvatar(it) }
+                user.login?.let { setLogin(it) } ?: Log.i(
+                    "[UsersListPresenter]",
+                    "$user user login is null"
+                )
+                user.avatarUrl?.let { loadAvatar(it) } ?: Log.i(
+                    "[UsersListPresenter]",
+                    "$user user avatarUrl is null"
+                )
             }
         }
     }
@@ -50,7 +57,7 @@ class UsersPresenter(
         viewState.init()
         loadData()
         usersListPresenter.itemClickListener = { itemView ->
-            with(usersListPresenter.users[itemView.pos]){
+            with(usersListPresenter.users[itemView.pos]) {
                 router.navigateTo(Screens.user(this))
             }
         }
