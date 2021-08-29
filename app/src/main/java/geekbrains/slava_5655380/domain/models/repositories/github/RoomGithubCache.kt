@@ -5,7 +5,7 @@ import geekbrains.slava_5655380.domain.models.repositories.github.repository.Roo
 import geekbrains.slava_5655380.domain.models.repositories.github.user.GithubUser
 import geekbrains.slava_5655380.domain.models.repositories.github.user.RoomGithubUser
 
-class RoomGithubCache(private val db: Database = Database.getInstance()) : IRoomGithubCache {
+class RoomGithubCache(private val db: Database) : IGithubCache {
     override fun cacheUsers(users: List<GithubUser>) = with(users.map { user ->
         RoomGithubUser(
             user.id ?: "",

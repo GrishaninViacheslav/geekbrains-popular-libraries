@@ -4,13 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import geekbrains.slava_5655380.ApiHolder
 import geekbrains.slava_5655380.App
 import geekbrains.slava_5655380.databinding.FragmentUsersBinding
-import geekbrains.slava_5655380.domain.models.imageloader.GlideImageLoader
-import geekbrains.slava_5655380.domain.models.networkstatus.AndroidNetworkStatus
-import geekbrains.slava_5655380.domain.models.repositories.github.RetrofitGithubUsersRepo
-import geekbrains.slava_5655380.domain.models.repositories.github.RoomGithubCache
 import geekbrains.slava_5655380.ui.presenters.users.UsersPresenter
 import geekbrains.slava_5655380.ui.views.fragments.users.adapter.UsersRVAdapter
 import moxy.MvpAppCompatFragment
@@ -22,13 +17,11 @@ class UsersFragment : MvpAppCompatFragment(), UsersView, BackButtonListener {
     }
 
     val presenter: UsersPresenter by moxyPresenter {
-        UsersPresenter(
-            usersRepo = RetrofitGithubUsersRepo(ApiHolder.api, AndroidNetworkStatus(requireContext()), RoomGithubCache()),
-            router = App.instance.router
-        )
+        UsersPresenter().apply {
+            App.instance.appComponent.inject(this)
+        }
     }
     var adapter: UsersRVAdapter? = null
-
     private var vb: FragmentUsersBinding? = null
 
     override fun onCreateView(
@@ -47,7 +40,9 @@ class UsersFragment : MvpAppCompatFragment(), UsersView, BackButtonListener {
 
     override fun init() {
         vb?.rvUsers?.layoutManager = LinearLayoutManager(context)
-        adapter = UsersRVAdapter(presenter.usersListPresenter, GlideImageLoader())
+        adapter = UsersRVAdapter(
+            presenter.usersListPresenter
+        ).apply { App.instance.appComponent.inject(this) }
         vb?.rvUsers?.adapter = adapter
     }
 

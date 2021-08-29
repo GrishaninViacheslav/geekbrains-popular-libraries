@@ -11,24 +11,24 @@ import io.reactivex.schedulers.Schedulers
 class RetrofitGithubUsersRepo(
     private val api: IDataSource,
     private val networkStatus: INetworkStatus,
-    private val cache: IRoomGithubCache
+    private val usersCache: IGithubCache
 ) : IGithubUsersRepo {
     override fun getUsers() = networkStatus.isOnlineSingle().flatMap { isOnline ->
         if (isOnline) {
             api.getUsers()
                 .flatMap { users ->
                     Single.fromCallable {
-                        cache.cacheUsers(users)
+                        usersCache.cacheUsers(users)
                         users
                     }
                 }
         } else {
             Single.fromCallable {
-                cache.getUsersCache()
+                usersCache.getUsersCache()
             }
         }
     }.subscribeOn(Schedulers.io())
-    
+
     override fun getRepositories(user: GithubUser) =
         networkStatus.isOnlineSingle().flatMap { isOnline ->
             if (isOnline) {
@@ -36,7 +36,7 @@ class RetrofitGithubUsersRepo(
                     api.getRepositories(url)
                         .flatMap { repositories ->
                             Single.fromCallable {
-                                cache.cacheRepositories(repositories, user)
+                                usersCache.cacheRepositories(repositories, user)
                                 repositories
                             }
                         }
@@ -44,7 +44,7 @@ class RetrofitGithubUsersRepo(
                     .subscribeOn(Schedulers.io())
             } else {
                 Single.fromCallable {
-                    cache.getRepositories(user)
+                    usersCache.getRepositories(user)
                 }
             }
         }.subscribeOn(Schedulers.io())

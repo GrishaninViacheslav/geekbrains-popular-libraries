@@ -5,24 +5,21 @@ import com.github.terrakok.cicerone.Router
 import geekbrains.slava_5655380.domain.models.repositories.github.user.GithubUser
 import geekbrains.slava_5655380.domain.models.repositories.github.IGithubUsersRepo
 import geekbrains.slava_5655380.domain.models.repositories.github.repository.GithubRepository
-import geekbrains.slava_5655380.ui.views.Screens
+import geekbrains.slava_5655380.ui.views.activity.IScreens
 import geekbrains.slava_5655380.ui.views.fragments.user.UserView
 import geekbrains.slava_5655380.ui.views.fragments.user.adapter.RepositoryItemView
 import io.reactivex.Scheduler
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableSingleObserver
 import moxy.MvpPresenter
+import javax.inject.Inject
 
 class UserPresenter(
-    private val userRepository: IGithubUsersRepo,
-    private val router: Router,
     private val user: GithubUser,
     private var disposable: Disposable? = null,
-    private val uiScheduler: Scheduler = AndroidSchedulers.mainThread(),
     val repositoryListPresenter: RepositoryListPresenter = RepositoryListPresenter()
 ) : MvpPresenter<UserView>() {
-    class RepositoryListPresenter() : IRepositoriesListPresenter {
+    class RepositoryListPresenter : IRepositoriesListPresenter {
         val repositories = mutableListOf<GithubRepository>()
         override var itemClickListener: ((RepositoryItemView) -> Unit)? = null
 
@@ -38,6 +35,18 @@ class UserPresenter(
             }
         }
     }
+
+    @Inject
+    lateinit var usersRepo: IGithubUsersRepo
+
+    @Inject
+    lateinit var router: Router
+
+    @Inject
+    lateinit var uiScheduler: Scheduler
+
+    @Inject
+    lateinit var screens: IScreens
 
     private val observer = object : DisposableSingleObserver<List<GithubRepository>>() {
         override fun onSuccess(value: List<GithubRepository>) {
@@ -57,7 +66,7 @@ class UserPresenter(
         loadData()
         repositoryListPresenter.itemClickListener = { itemView ->
             with(repositoryListPresenter.repositories[itemView.pos]) {
-                router.navigateTo(Screens.repository(this))
+                router.navigateTo(screens.repository(this))
             }
         }
     }
@@ -68,7 +77,7 @@ class UserPresenter(
     }
 
     private fun loadData() {
-        disposable = userRepository
+        disposable = usersRepo
             .getRepositories(user)
             .observeOn(uiScheduler)
             .subscribeWith(observer)

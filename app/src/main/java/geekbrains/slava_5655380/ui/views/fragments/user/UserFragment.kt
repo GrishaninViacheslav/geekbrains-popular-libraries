@@ -7,14 +7,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.CreateMethod
 import by.kirich1409.viewbindingdelegate.viewBinding
-import geekbrains.slava_5655380.ApiHolder
 import geekbrains.slava_5655380.App
 import geekbrains.slava_5655380.R
 import geekbrains.slava_5655380.databinding.FragmentUserBinding
-import geekbrains.slava_5655380.domain.models.networkstatus.AndroidNetworkStatus
 import geekbrains.slava_5655380.domain.models.repositories.github.user.GithubUser
-import geekbrains.slava_5655380.domain.models.repositories.github.RetrofitGithubUsersRepo
-import geekbrains.slava_5655380.domain.models.repositories.github.RoomGithubCache
 import geekbrains.slava_5655380.ui.presenters.user.UserPresenter
 import geekbrains.slava_5655380.ui.views.fragments.user.adapter.RepositoryRVAdapter
 import geekbrains.slava_5655380.ui.views.fragments.users.BackButtonListener
@@ -22,15 +18,12 @@ import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
 class UserFragment : MvpAppCompatFragment(), UserView, BackButtonListener {
-    private val user by lazy { requireArguments().getParcelable<GithubUser>(ARG_USER) }
-    private val ARG_USER = "USER"
     private val view: FragmentUserBinding by viewBinding(createMethod = CreateMethod.INFLATE)
-    private val presenter by moxyPresenter {
+
+    val presenter: UserPresenter by moxyPresenter {
         UserPresenter(
-            RetrofitGithubUsersRepo(ApiHolder.api, AndroidNetworkStatus(requireContext()), RoomGithubCache()),
-            App.instance.router,
-            user!!
-        )
+            arguments?.getParcelable<GithubUser>(USER_ARG) as GithubUser
+        ).apply { App.instance.appComponent.inject(this) }
     }
 
     var adapter: RepositoryRVAdapter? = null
@@ -41,13 +34,13 @@ class UserFragment : MvpAppCompatFragment(), UserView, BackButtonListener {
     ): View = view.root
 
     companion object {
-        @JvmStatic
-        fun newInstance(user: GithubUser) =
-            UserFragment().apply {
-                arguments = Bundle().apply {
-                    putParcelable(ARG_USER, user)
-                }
+        private const val USER_ARG = "user"
+
+        fun newInstance(user: GithubUser) = UserFragment().apply {
+            arguments = Bundle().apply {
+                putParcelable(USER_ARG, user)
             }
+        }
     }
 
     override fun showUserData(data: String) {

@@ -17,17 +17,15 @@ import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 
 class RepositoryFragment : MvpAppCompatFragment(), RepositoryView, BackButtonListener {
-    private val repository by lazy { requireArguments().getParcelable<GithubRepository>(argRepository) }
-    private val argRepository = "REPOSITORY"
     private val view: FragmentRepositoryBinding by viewBinding(createMethod = CreateMethod.INFLATE)
-    private val presenter by moxyPresenter {
-        RepositoryPresenter(
-            App.instance.router,
-            repository!!
-        )
-    }
 
     var adapter: RepositoryRVAdapter? = null
+
+    val presenter: RepositoryPresenter by moxyPresenter {
+        val repository =
+            arguments?.getParcelable<GithubRepository>(REPOSITORY_ARG) as GithubRepository
+        RepositoryPresenter(repository).apply { App.instance.appComponent.inject(this) }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,13 +33,13 @@ class RepositoryFragment : MvpAppCompatFragment(), RepositoryView, BackButtonLis
     ): View = view.root
 
     companion object {
-        @JvmStatic
-        fun newInstance(repository: GithubRepository) =
-            RepositoryFragment().apply {
-                arguments = Bundle().apply {
-                    putParcelable(argRepository, repository)
-                }
+        private const val REPOSITORY_ARG = "repository"
+
+        fun newInstance(repository: GithubRepository) = RepositoryFragment().apply {
+            arguments = Bundle().apply {
+                putParcelable(REPOSITORY_ARG, repository)
             }
+        }
     }
 
     override fun backPressed() = presenter.backPressed()
@@ -51,6 +49,7 @@ class RepositoryFragment : MvpAppCompatFragment(), RepositoryView, BackButtonLis
     }
 
     override fun setDescription(description: String) {
-        view.tvRepositoryDescription.text = String.format(getString(R.string.repository_description_is), description)
+        view.tvRepositoryDescription.text =
+            String.format(getString(R.string.repository_description_is), description)
     }
 }

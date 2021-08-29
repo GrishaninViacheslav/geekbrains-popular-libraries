@@ -8,7 +8,7 @@ import geekbrains.slava_5655380.ui.views.fragments.repository.RepositoryFragment
 import geekbrains.slava_5655380.ui.views.fragments.user.UserFragment
 import geekbrains.slava_5655380.ui.views.fragments.users.UsersFragment
 
-object Screens : IScreens {
+class Screens : IScreens {
     override fun users() = FragmentScreen { UsersFragment.newInstance() }
     override fun user(user: GithubUser) = FragmentScreen { UserFragment.newInstance(user) }
     override fun repository(repository: GithubRepository) =
