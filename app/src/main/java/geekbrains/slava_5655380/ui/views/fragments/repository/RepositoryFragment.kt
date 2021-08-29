@@ -9,7 +9,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import geekbrains.slava_5655380.App
 import geekbrains.slava_5655380.R
 import geekbrains.slava_5655380.databinding.FragmentRepositoryBinding
-import geekbrains.slava_5655380.domain.models.githubusers.githubrepository.GithubRepository
+import geekbrains.slava_5655380.domain.models.repositories.github.repository.GithubRepository
 import geekbrains.slava_5655380.ui.presenters.repository.RepositoryPresenter
 import geekbrains.slava_5655380.ui.views.fragments.user.adapter.RepositoryRVAdapter
 import geekbrains.slava_5655380.ui.views.fragments.users.BackButtonListener

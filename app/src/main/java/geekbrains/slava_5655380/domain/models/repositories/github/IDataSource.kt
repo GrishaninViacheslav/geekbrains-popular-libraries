@@ -1,6 +1,7 @@
-package geekbrains.slava_5655380.domain.models.githubusers
+package geekbrains.slava_5655380.domain.models.repositories.github
 
-import geekbrains.slava_5655380.domain.models.githubusers.githubrepository.GithubRepository
+import geekbrains.slava_5655380.domain.models.repositories.github.repository.GithubRepository
+import geekbrains.slava_5655380.domain.models.repositories.github.user.GithubUser
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Url
